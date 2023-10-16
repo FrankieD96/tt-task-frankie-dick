@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\MemberController;
+use App\Http\Controllers\SchoolController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
