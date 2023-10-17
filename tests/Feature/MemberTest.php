@@ -27,7 +27,7 @@ class MemberTest extends TestCase
 
         $response = $this->getJson('/api/members');
 
-        $response->assertStatus(200)
+        $response->assertOk()
 
             ->assertJson(function (AssertableJson $json) {
                 $json->hasAll(['message', 'data'])

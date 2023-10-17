@@ -19,7 +19,7 @@ class SchoolTest extends TestCase
 
         $response = $this->getJson('/api/schools');
 
-        $response->assertStatus(200)
+        $response->assertOk()
 
             ->assertJson(function (AssertableJson $json) {
                 $json->hasall(['message', 'data'])

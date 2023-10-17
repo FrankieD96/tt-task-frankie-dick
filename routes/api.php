@@ -20,7 +20,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/members', [MemberController::class, 'getAllMembers']);
-Route::post('/members', [MemberController::class, 'addNewMember']);
+Route::controller(MemberController::class)->group(function() {
+    Route::get('/members', 'getAllMembers');
+    Route::post('/members', 'addNewMember');
+});
 
 Route::get('/schools', [SchoolController::class, 'getAllSchools']);

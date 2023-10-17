@@ -16,7 +16,7 @@ class MemberController extends Controller
         ]);
     }
 
-    public function addNewMember(Request $request)
+    public function addNewMember(Request $request): JsonResponse
     {
         $request->validate([
             'name' => 'required|string|max:100',
