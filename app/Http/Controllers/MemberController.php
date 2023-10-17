@@ -15,4 +15,31 @@ class MemberController extends Controller
             'message' => 'Members succesfully retrieved'
         ]);
     }
+
+    public function addNewMember(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'email' => 'required|email',
+            'school_ids' => 'required|array|min:1',
+            'school_ids.*' => 'integer|min:1|exists:schools,id'
+        ]);
+
+        $newMember = new Member();
+
+        $newMember->name = $request->name;
+        $newMember->email = $request->email;
+
+        if ($newMember->save()) {
+            $newMember->schools()->attach($request->school_ids);
+
+            return response()->json([
+                'message' => 'Member added'
+            ], 201);
+        }
+
+        return response()->json([
+            'message' => 'Unexpected error occured'
+        ], 500);
+    }
 }
