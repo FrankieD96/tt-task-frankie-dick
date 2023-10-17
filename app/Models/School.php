@@ -10,6 +10,8 @@ class School extends Model
 {
     use HasFactory;
 
+    protected $hidden = ['pivot'];
+
     public function members(): BelongsToMany
     {
         return $this->belongsToMany(Member::class);
