@@ -24,7 +24,7 @@ class MemberTest extends TestCase
             $member->schools()->attach($schools->random());
         });
 
-        $response = $this->json('GET', 'api/members');
+        $response = $this->getJson('/api/members');
 
         $response->assertStatus(200)
 

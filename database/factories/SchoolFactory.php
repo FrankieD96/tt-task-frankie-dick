@@ -17,7 +17,6 @@ class SchoolFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => $this->faker->randomNumber(3, false),
             'name' => $this->faker->text(50),
         ];
     }
