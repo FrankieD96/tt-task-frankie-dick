@@ -132,4 +132,11 @@ class MemberTest extends TestCase
                     });
         });
     }
+
+    public function test_get_all_members_by_school_invalid_school(): void
+    {
+        $response = $this->getJson('/api/members?school=1000');
+        $response->assertStatus(422);
+        $response->assertInvalid('school');
+    }
 }
