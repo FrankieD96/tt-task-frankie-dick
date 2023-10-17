@@ -10,7 +10,7 @@ class School extends Model
 {
     use HasFactory;
 
-    protected $hidden = ['pivot'];
+    protected $hidden = ['created_at', 'updated_at','pivot'];
 
     public function members(): BelongsToMany
     {

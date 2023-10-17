@@ -97,4 +97,39 @@ class MemberTest extends TestCase
        ]);
 
     }
+
+    public function test_get_all_members_by_school_filter_success(): void
+    {
+        $schools = School::factory()->count(2)->create();
+
+        $members = Member::factory()->count(10)->create();
+
+        $members->each(function($member) use ($schools) {
+            $member->schools()->attach($schools->first());
+        });
+
+        $filterBySchool = $schools->first();
+
+        $response = $this->getJson("/api/members?school={$filterBySchool->id}");
+
+        $response->assertOk()
+            ->assertJson(function (AssertableJson $json) use ($filterBySchool) {
+                $json->hasAll(['message', 'data'])
+                    ->whereAllType([
+                        'message' => 'string'
+                    ])
+                    ->has('data', 10, function(AssertableJson $json) use ($filterBySchool) {
+                        $json->hasAll(['id', 'name', 'email'])
+                            ->whereAllType([
+                                'id' => 'integer',
+                                'name' => 'string',
+                                'email' => 'string',  
+                            ])
+                            ->has('schools', 1, function (AssertableJson $json) use ($filterBySchool) {    
+                                $json->where('id', $filterBySchool->id)
+                                    ->where('name', $filterBySchool->name);
+                            });
+                    });
+        });
+    }
 }
