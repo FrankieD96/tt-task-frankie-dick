@@ -8,10 +8,36 @@ use Illuminate\Http\Request;
 
 class MemberController extends Controller
 {
-    public function getAllMembers(): JsonResponse
+    public function getAllMembers(Request $request): JsonResponse
     {
+        $request->validate([
+            'school' => 'nullable|integer|min:1|exists:schools,id'
+        ]);
+
+        $hidden = ['created_at', 'updated_at'];
+
+        $school = $request->query('school');
+        $members = Member::with(['schools' => function($query) use ($school) {
+            $query->when(
+                $school !==null,
+                function ($query) use ($school) {
+                    $query->where('member_school.school_id', $school);
+                });
+        }]);
+
+        $members = $members->when(
+            $school !== null,
+            function ($query) use ($school) {
+                return $query->whereHas('schools', function($subquery) use ($school) {
+                    $subquery->where('schools.id', $school);
+                });
+            }
+        );
+
+        $members = $members->get()->makeHidden($hidden);
+        
         return response()->json([
-            'data' => Member::with('schools:id,name')->get()->makeHidden(['created_at', 'updated_at']),
+            'data' => $members,
             'message' => 'Members succesfully retrieved'
         ]);
     }
