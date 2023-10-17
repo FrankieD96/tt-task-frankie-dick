@@ -7,6 +7,7 @@ use App\Models\School;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Testing\Assert;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
@@ -51,5 +52,49 @@ class MemberTest extends TestCase
                             
                     });
             });
+    }
+
+    public function test_member_add_invalid_data(): void
+    {
+        $response = $this->postJson('/api/members', [
+            'name' => 3,
+            'email' => 'test',
+            'school_ids' => [1],
+            'school_ids.*' => 'test'
+        ]);
+
+        $response->assertStatus(422)
+            ->assertInvalid(['name', 'email', 'school_ids.0']);   
+    }
+
+    public function test_member_add_success(): void
+    {
+       $school = School::factory()->create();
+       
+       $response = $this->postJson('/api/members', [
+        'name' => 'John Doe',
+        'email' => 'john.doe@email.com',
+        'school_ids' => [$school->id],
+       ]);
+
+       $response->assertStatus(201);
+       $response->assertJson(function (AssertableJson $json) {
+        $json->has('message')
+            ->where(
+                'message',
+                "Member added"
+            );
+       });
+
+       $this->assertDatabaseHas('members', [
+        'name' => 'John Doe',
+        'email' => 'john.doe@email.com',
+       ]);
+
+       $this->assertDatabaseHas('member_school', [
+        'member_id' => 1,
+        'school_id' => $school->id
+       ]);
+
     }
 }
