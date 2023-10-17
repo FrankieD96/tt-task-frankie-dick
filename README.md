@@ -1,3 +1,105 @@
+# TT Members API
+
+## API documentation
+
+### Get all members - optionally filtered
+
+- **URL:** `/api/members`
+- **Method:** `GET`
+- **URL Parameters:**</br>
+    - **Required:** none</br>
+    - **Optional:**
+      - `school=int` - Filter results by school id
+
+**Example URL:**
+- `/api/members?school=1`
+
+**Success Response:**
+- Code: 200</br>
+  Content:
+```json
+{
+    "data": [
+        {
+            "id": 1,
+            "name": "John Doe",
+            "email": "john.doe@email.com",
+            "schools": [
+                {
+                    "id": 1,
+                    "name": "Example School"
+                }
+            ]
+        }
+    ],
+    "message": "Members successfully retrieved"
+}
+```
+**Error Response:**
+- Code: 422 UNPROCESSABLE CONTENT</br>
+  Content:
+```json
+{
+    "message": "The selected school is invalid.",
+    "errors": {
+        "school": [
+            "The selected school is invalid."
+        ]
+    }
+}
+```
+### Add a new member
+
+- **URL:** `/api/members`
+- **Method:** `POST`
+- **URL Parameters:**
+  - **Required:** None
+  - **Optional:** None
+
+- **Body Data:**
+
+```json
+{
+    "name": "Jane Doe",
+    "email": "Jane.doe@email.com",
+    "school_ids": [1]
+}
+```
+**Success Response:**
+- Code: 201</br>
+  Content:
+```json
+{
+    "message": "Member added"
+}
+```
+**Error Response:**
+- Code: 422 UNPROCESSABLE CONTENT</br>
+  Content:
+```json
+{
+    "message": "The name field is required. (and 2 more errors)",
+    "errors": {
+        "name": [
+            "The name field is required."
+        ],
+        "email": [
+            "The email field is required."
+        ],
+        "school_ids": [
+            "the school ids field is required."
+        ]   
+    }
+}
+```
+- Code: 500 INTERNAL SERVER ERROR</br>
+  Content:
+  ```json
+  {
+    "message": "Unexpected error occurred"
+  }
+  ```
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
